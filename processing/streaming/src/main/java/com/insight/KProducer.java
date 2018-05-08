@@ -33,6 +33,7 @@ public class KProducer {
         String line = null;
         while ((line = br.readLine()) != null) {
             lineCount++;
+
             producer.send(new ProducerRecord<String, String>("ctest", Integer.toString(lineCount), line));
             System.out.println(new ProducerRecord<String, String>("ctest", Integer.toString(lineCount), line));
         }

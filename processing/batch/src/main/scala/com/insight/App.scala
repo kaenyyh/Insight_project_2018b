@@ -69,14 +69,15 @@ object App {
 
 
     //!!!!!!!!!!!!!!!!  mapreduce to calculate article update times by month !!!!!!!!!!!
-    val TABLE_COLUMNS = SomeColumns("arttitle", "date", "count")
+    val TABLE_COLUMNS_ART = SomeColumns("arttitle", "date", "count")
 
     myFile.map{ line => {
       val lines = line.split(" ")
       val formatedmonth = lines(4).slice(0,7)
       ((lines(3), formatedmonth), 1)
     }}.reduceByKey(_ + _).map(p => (p._1._1, p._1._2, p._2))
-      .saveToCassandra("playground", "sumtest", TABLE_COLUMNS)
+      .saveToCassandra("playground", "sumtest", TABLE_COLUMNS_ART)
+
 
 
     // read from cassandra:
