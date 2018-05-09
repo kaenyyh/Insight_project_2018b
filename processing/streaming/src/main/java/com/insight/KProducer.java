@@ -11,7 +11,7 @@ import java.util.Properties;
 public class KProducer {
     public void kafkaProducer() throws IOException {
         Properties props = new Properties();
-        props.put("bootstrap.servers","ec2-34-213-54-16.us-west-2.compute.amazonaws.com:9092");
+        props.put("bootstrap.servers","ec2-50-112-36-122.us-west-2.compute.amazonaws.com:9092");
         props.put("acks","all");
         props.put("retries",0);
         props.put("batch.size",16384);
