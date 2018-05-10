@@ -5,10 +5,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.flink.api.common.accumulators.IntCounter;
-import org.apache.flink.api.common.functions.AggregateFunction;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 //import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -91,10 +88,71 @@ public class FlinkProcess {
                 .sum(2);
 
 
+        CassandraSink.addSink(windowedoutput)
+                .setQuery("INSERT INTO ks.totalInputCountSecond (global_id, proc_time, count) " +
+                        "values (?, ?, ?);")
+                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .build();
 
 
-//                .timeWindow(org.apache.flink.streaming.api.windowing.time.Time.of(5, TimeUnit.SECONDS))
-//                .sum(1);
+        // input data: ['revision', 'article_id', 'rev_id', 'article_title', 'event_time', 'username', 'userid', 'proc_date', 'proc_time']
+        // output data: ['username', 'proc_time', 'count']
+        // transformation: count all input within 0.5s time window
+        // save output to Cassandra table: singleUserCountSecond
+        // table:
+        DataStream<Tuple3<String, String, Long>> singleUserCount = rawInputStream
+                .map(line -> line.split(" "))
+                .flatMap(new FlatMapFunction<String[], Tuple3<String, String, Long>>() {
+                    @Override
+                    public void flatMap(String[] s, Collector<Tuple3<String,String, Long>> collector) throws Exception {
+                        collector.collect(new Tuple3<String,String, Long>(s[5], s[8], 1L));
+
+                    }
+                })
+                .keyBy(0, 1)
+                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(500)))
+                .sum(2);
+
+
+        CassandraSink.addSink(singleUserCount)
+                .setQuery("INSERT INTO ks.singleUserCount (username, proc_time, count) " +
+                        "values (?, ?, ?);")
+                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .build();
+
+
+        // input data: ['revision', 'article_id', 'rev_id', 'article_title', 'event_time', 'username', 'userid', 'proc_date', 'proc_time']
+        // output data: ['global_id', 'proc_time', 'username', 'count']
+        // transformation: count all input within 0.5s time window
+        // save output to Cassandra table: flaggedUser
+        // table:
+        DataStream<Tuple4<String, String, String, Long>> flaggedUser = rawInputStream
+                .map(line -> line.split(" "))
+                .flatMap(new FlatMapFunction<String[], Tuple4<String, String, String, Long>>() {
+                    @Override
+                    public void flatMap(String[] s, Collector<Tuple4<String, String, String, Long>> collector) throws Exception {
+                        collector.collect(new Tuple4<String,String, String, Long>("a", s[8], s[5], 1L));
+
+                    }
+                })
+                .keyBy(0, 1, 2)
+                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(500)))
+                .sum(3)
+                .filter(a -> a.f3 > 50);
+//                .filter(new FilterFunction<Tuple3<String, String, Long>>() {
+//                    @Override
+//                    public boolean filter(Tuple3<String, String, Long> stringStringLongTuple3) throws Exception {
+//                        return stringStringLongTuple3.f2 > 100;
+//                    }
+//                });
+
+
+        CassandraSink.addSink(flaggedUser)
+                .setQuery("INSERT INTO ks.flaggedUser (global_id, proc_time, username, count) " +
+                        "values (?,?, ?, ?);")
+                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .build();
+
 
 //        // count the total number of processed line in window of 5 sec
 //        DataStream<Tuple2<Long, Long>> winOutput = rawInputStream
@@ -150,11 +208,7 @@ public class FlinkProcess {
 
 
 //        //Update the results to C* sink
-        CassandraSink.addSink(windowedoutput)
-                .setQuery("INSERT INTO playground.testTable ( id, time, count) " +
-                        "values (?, ?, ?);")
-                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
-                .build();
+
 
 //        // update output to cassandra:
 //                CassandraSink.addSink(output)

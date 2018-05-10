@@ -1,5 +1,7 @@
-com/insight/KProducer.class
-com/insight/FlinkProcess$SumAggregation.class
+com/insight/FlinkProcess$2.class
 com/insight/FlinkProcess$1.class
 com/insight/FlinkProcess.class
 com/insight/ProcessedInput.class
+com/insight/FlinkProcess$3.class
+com/insight/KProducer.class
+com/insight/FlinkProcess$SumAggregation.class

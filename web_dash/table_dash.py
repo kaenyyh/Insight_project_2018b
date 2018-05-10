@@ -25,7 +25,6 @@ session.execute("USE " + CASSANDRA_NAMESPACE)
 
 
 
-
 app.layout = html.Div([
     html.Div([
         html.H2("Streaming Wikipedia Usage Monitor"),
@@ -41,34 +40,24 @@ app.layout = html.Div([
         dcc.Interval(id='wiki-edit-update', interval=1000, n_intervals=0),
     ], className='row wiki-edit-row'),
     html.Div([
-        html.Div([
- 	    html.H4("Latest 5 'Malicous' Users: "),
+	html.Div(children = [
+            html.H4(children='US Agriculture Exports (2011)'),
         ], className='Title'),
-        html.Div([
-            html.H5(id='tableoutput')
-        ]),
-        dcc.Interval(id='table-update', interval=1000, n_intervals=0),
-    ], style={'width': '49%', 'display': 'inline-block'}), 
-    html.Div([
-	html.Div([
-            html.H4("Edits of latest 'malicious' user: ")
-        ],  className='Title'),
-	html.Div([
-	    dcc.Graph(id='histogramout'),
-        ]),
-        dcc.Interval(id='histogram-update', interval=1000, n_intervals=0),
-    ], style={'width': '49%', 'display': 'inline-block'})
+	html.Div(children = [
+            dcc.Graph(id='flagged-user'),
+	], className='table flaggedtable'),
+        dcc.Interval(id='flagged-user-update', interval=1000, n_intervals=0),
+    ], className='flagged-user-table')
 ], style={'padding': '0px 10px 15px 10px',
           'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
           'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
 
-@app.callback(
-    Output(component_id='tableoutput', component_property='children'),
-    [Input('table-update', 'n_intervals')]
-)
-def generate_table(interval):
+
+@app.callback(Output('flagged-user', 'figure'), [Input('flagged-user-update', 'n_intervals')])
+def generate_table( max_rows=10):
+
     news_rec = session.execute('SELECT * FROM testtable')
     materialized_news = list(news_rec)
     df = pd.DataFrame(materialized_news, columns=['id','time','count'])
@@ -80,64 +69,10 @@ def generate_table(interval):
         # Body
         [html.Tr([
             html.Td(df.iloc[i][col]) for col in df.columns
-        ]) for i in range(5)]
+        ]) for i in range(min(len(df), max_rows))]
     )
 
-@app.callback(
-    Output('histogramout','figure' ),
-    [Input('histogram-update', 'n_intervals')]
-)
-def get_malicious_user(interval):
-    rows = session.execute("SELECT * FROM testtable ")
 
-    revnum = []
-    for i in range(1, 11):
-        revnum.append(rows[i].count)
-
-    bin_val = np.histogram(revnum, bins=10)
-
-    trace = Bar(
-#        x=bin_val[1],
-#        y=bin_val[0],
-	y=revnum,
-        marker=Marker(
-#            color='#7F7F7F'
-	color='#42C4F7'
-        ),
-        showlegend=False,
-        hoverinfo='x+y'
-    ) 
-
-    layout = Layout(
-        xaxis=dict(
-            title='Wind Speed (mph)',
-            showgrid=False,
-            showline=False,
-            fixedrange=True
-        ),
-        yaxis=dict(
-            showgrid=False,
-            showline=False,
-            zeroline=False,
-            title='Number of Samples',
-            fixedrange=True
-        ),
-        margin=Margin(
-            t=50,
-            b=20,
-            r=5
-        ),
-        autosize=True,
-        bargap=0.01,
-        bargroupgap=0,
-        hovermode='closest',
-        legend=Legend(
-            x=0.175,
-            y=-0.2,
-            orientation='h'
-        )
-    )
-    return Figure(data=[trace], layout=layout)
 
 
 @app.callback(Output('wiki-edit', 'figure'), [Input('wiki-edit-update', 'n_intervals')])
@@ -149,11 +84,22 @@ def gen_wind_speed(interval):
 
     total_time = (hour * 3600) + (minute * 60) + (sec)
 
+    from cassandra.cluster import Cluster
+    
+#    CASSANDRA_SERVER    = ['35.162.115.222', '54.68.116.229', '50.112.36.122', '52.88.106.70']
+#    CASSANDRA_NAMESPACE = "playground"
+#    cluster = Cluster(CASSANDRA_SERVER)
+#    session = cluster.connect()
+#    session.execute("USE " + CASSANDRA_NAMESPACE)
+#article titles
     rows = session.execute("SELECT count FROM testtable ")
 
     revnum = []
+#    i = 0
     for i in range(200):
+#    while rows[i] != None:
         revnum.append(rows[i].count)
+#	i += 1
 
 
 #    month = []
