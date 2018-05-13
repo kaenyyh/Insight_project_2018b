@@ -315,6 +315,7 @@
       <change beforePath="" afterPath="$PROJECT_DIR$/../streaming/.idea/misc.xml" />
       <change beforePath="" afterPath="$PROJECT_DIR$/../streaming/.idea/modules.xml" />
       <change beforePath="" afterPath="$PROJECT_DIR$/../streaming/src/main/java/com/insight/ProcessedInput.java" />
+      <change beforePath="$PROJECT_DIR$/../../cassandra/CassandraTables.cql" afterPath="$PROJECT_DIR$/../../cassandra/CassandraTables.cql" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/com/insight/App.scala" afterPath="$PROJECT_DIR$/src/main/scala/com/insight/App.scala" />
       <change beforePath="$PROJECT_DIR$/../streaming/.idea/compiler.xml" afterPath="$PROJECT_DIR$/../streaming/.idea/compiler.xml" />
       <change beforePath="$PROJECT_DIR$/../streaming/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../streaming/.idea/workspace.xml" />
@@ -323,10 +324,11 @@
       <change beforePath="$PROJECT_DIR$/../streaming/src/main/java/com/insight/KProducer.java" afterPath="$PROJECT_DIR$/../streaming/src/main/java/com/insight/KProducer.java" />
       <change beforePath="$PROJECT_DIR$/../streaming/streaming.iml" afterPath="$PROJECT_DIR$/../streaming/streaming.iml" />
       <change beforePath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$1.class" afterPath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$1.class" />
+      <change beforePath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$2.class" afterPath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$2.class" />
+      <change beforePath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$3.class" afterPath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$3.class" />
       <change beforePath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$SumAggregation.class" afterPath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess$SumAggregation.class" />
       <change beforePath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess.class" afterPath="$PROJECT_DIR$/../streaming/target/classes/com/insight/FlinkProcess.class" />
       <change beforePath="$PROJECT_DIR$/../streaming/target/flink-process-v1.jar" afterPath="$PROJECT_DIR$/../streaming/target/flink-process-v1.jar" />
-      <change beforePath="$PROJECT_DIR$/../streaming/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/../streaming/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
       <change beforePath="$PROJECT_DIR$/../streaming/target/original-flink-process-v1.jar" afterPath="$PROJECT_DIR$/../streaming/target/original-flink-process-v1.jar" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />

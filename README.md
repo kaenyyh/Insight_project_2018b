@@ -37,5 +37,5 @@ Use Case:
 
 
 ## Architecture
-![](arch_flink.png)
+![](images/arch_flink.png)
 

@@ -1,16 +1,18 @@
 package com.insight;
 
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.operators.JoinOperator;
 import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
-//import org.apache.flink.api.common.time.Time;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.tuple.*;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
@@ -24,6 +26,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.util.Collector;
 import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.connectors.cassandra.CassandraSink;
+
 
 import static java.util.concurrent.TimeUnit.*;
 
@@ -78,8 +81,8 @@ public class FlinkProcess {
                 .map(line -> line.split(" "))
                 .flatMap(new FlatMapFunction<String[], Tuple3<String, String, Long>>() {
                     @Override
-                    public void flatMap(String[] s, Collector<Tuple3<String,String, Long>> collector) throws Exception {
-                        collector.collect(new Tuple3<String,String, Long>("a", s[8], 1L));
+                    public void flatMap(String[] s, Collector<Tuple3<String, String, Long>> collector) throws Exception {
+                        collector.collect(new Tuple3<String, String, Long>("a", s[7] + " " + s[8], 1L));
 
                     }
                 })
@@ -104,13 +107,13 @@ public class FlinkProcess {
                 .map(line -> line.split(" "))
                 .flatMap(new FlatMapFunction<String[], Tuple3<String, String, Long>>() {
                     @Override
-                    public void flatMap(String[] s, Collector<Tuple3<String,String, Long>> collector) throws Exception {
-                        collector.collect(new Tuple3<String,String, Long>(s[5], s[8], 1L));
+                    public void flatMap(String[] s, Collector<Tuple3<String, String, Long>> collector) throws Exception {
+                        collector.collect(new Tuple3<String, String, Long>(s[5], s[7] + " " + s[8], 1L));
 
                     }
                 })
                 .keyBy(0, 1)
-                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(500)))
+                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(1000)))
                 .sum(2);
 
 
@@ -126,25 +129,30 @@ public class FlinkProcess {
         // transformation: count all input within 0.5s time window
         // save output to Cassandra table: flaggedUser
         // table:
-        DataStream<Tuple4<String, String, String, Long>> flaggedUser = rawInputStream
-                .map(line -> line.split(" "))
-                .flatMap(new FlatMapFunction<String[], Tuple4<String, String, String, Long>>() {
-                    @Override
-                    public void flatMap(String[] s, Collector<Tuple4<String, String, String, Long>> collector) throws Exception {
-                        collector.collect(new Tuple4<String,String, String, Long>("a", s[8], s[5], 1L));
+//        DataStream<Tuple4<String, String, String, Long>> flaggedUser = rawInputStream
+//                .map(line -> line.split(" "))
+//                .flatMap(new FlatMapFunction<String[], Tuple4<String, String, String, Long>>() {
+//                    @Override
+//                    public void flatMap(String[] s, Collector<Tuple4<String, String, String, Long>> collector) throws Exception {
+//                        collector.collect(new Tuple4<String,String, String, Long>("a", s[7]+" "+s[8], s[5], 1L));
+//
+//                    }
+//                })
+//                .keyBy(0, 1, 2)
+//                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(500)))
+//                .sum(3)
+//                .filter(a -> a.f3 > 50);
 
+
+
+        DataStream<Tuple4<String, String, String, Long>> flaggedUser = singleUserCount
+                .map(new MapFunction<Tuple3<String, String, Long>, Tuple4<String, String, String, Long>>() {
+                    @Override
+                    public Tuple4<String, String, String, Long> map(Tuple3<String, String, Long> stringStringLongTuple3) throws Exception {
+                        return new Tuple4<String, String, String, Long>("a", stringStringLongTuple3.f1, stringStringLongTuple3.f0, stringStringLongTuple3.f2);
                     }
                 })
-                .keyBy(0, 1, 2)
-                .window(TumblingProcessingTimeWindows.of(Time.milliseconds(500)))
-                .sum(3)
-                .filter(a -> a.f3 > 50);
-//                .filter(new FilterFunction<Tuple3<String, String, Long>>() {
-//                    @Override
-//                    public boolean filter(Tuple3<String, String, Long> stringStringLongTuple3) throws Exception {
-//                        return stringStringLongTuple3.f2 > 100;
-//                    }
-//                });
+                .filter(a -> a.f3 > 100);
 
 
         CassandraSink.addSink(flaggedUser)
@@ -230,7 +238,7 @@ public class FlinkProcess {
 
     }
 
-    private static class SumAggregation  implements AggregateFunction<Tuple2<String, Long>, Tuple2<String, Long>, Tuple2<String, Long>> {
+    private static class SumAggregation implements AggregateFunction<Tuple2<String, Long>, Tuple2<String, Long>, Tuple2<String, Long>> {
 
         // Similar to WinRateAggregator, but also count the number of occurences.
         // Input: <hero_id:String,win/lose:Integer,start_time:Long>
@@ -243,7 +251,7 @@ public class FlinkProcess {
         }
 
         @Override
-        public Tuple2<String, Long> add(Tuple2<String, Long> value, Tuple2<String,  Long> accumulator) {
+        public Tuple2<String, Long> add(Tuple2<String, Long> value, Tuple2<String, Long> accumulator) {
             // Update accumulator with the new value. Here we update the start_time to be the latest
             return new Tuple2<>(value.f0,
                     accumulator.f1 + value.f1);

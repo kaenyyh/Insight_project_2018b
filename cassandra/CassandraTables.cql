@@ -25,3 +25,8 @@ CREATE TABLE IF NOT EXISTS ks.flaggedUser(
           PRIMARY KEY     (username, proc_time)
           ) with clustering order by (proc_time DESC);
 
+CREATE TABLE IF NOT EXISTS ks.avgUserActivity(
+	  username	text,
+	  count		bigint,
+	  PRIMARY KEY	(username)
+)
