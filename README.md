@@ -1,6 +1,7 @@
-# 2018 Insight Data Engineering Project
+# Wiki-Guardian  *"Catch every Anomaly for you"*
 
-## Wiki-Guardian  *"Catch every Anomaly for you"*
+Insight 2018 Data Engineering Project
+
 
 
 ## Project Summary:
