@@ -40,5 +40,5 @@ Use Case:
 ![](images/arch_flink.png)
 
 ## Live Demo
-![alt text](https://github.com/kaenyyh/images/topwindow10.png)
+![alt text](https://github.com/kaenyyh/images/topwindow11.png)
 
