@@ -52,6 +52,4 @@ Use Case:
 ## Live Demo
 ![top window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif)
 
-<img src="https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif" alt="alt text" width="400" height="200">
-
-<img src="https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif" alt="alt text" width="400" height="200">![bottom window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif)
+<img src="https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif" alt="alt text" width="400" height="200"><img src="https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif" alt="alt text" width="400" height="200">![bottom window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif)
