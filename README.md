@@ -50,5 +50,5 @@ Use Case:
 ![arch](images/arch_flink.png)
 
 ## Live Demo
-![top window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif)
+![top window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif?v=4&s=200)
 ![bottom window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif)
