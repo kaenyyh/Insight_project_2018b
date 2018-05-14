@@ -38,10 +38,6 @@ Use Case:
 	
 	
 
-## Data:
-1. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
-2. The data set contains fields of "user_id", "Edit time", "article", "category";
-
 
 
 ## Live Demo
@@ -56,3 +52,7 @@ Use Case:
 
 ![arch](images/arch2.png)
 
+## Input Data:
+
+1. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
+2. The data set contains fields of "user_id", "Edit time", "article", "category";
