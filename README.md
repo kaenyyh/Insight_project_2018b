@@ -14,13 +14,11 @@ Changing and editing on existing topics are extrem common and quite often, espec
 
 #### Use Case:
 
-1. Total edits submission received by server:
-  1. Monitor trend of total submission to identify unexpected usage across all servers.
-2. Abnomal User Edits Detection: 
-  1. Identify the users who submitted too many edits within a short time window.
-  2. Extract the recent activity for this user from database to display.
-
-
+1. Monitor the edits submission received by server:
+   1. Monitor trend of total submission to identify unexpected usage across all servers
+2. Abnomal user edits detection:
+   1. Identify the users who submitted too many edits within a short time window
+   2. Extract the recent activity for this user from database to display
 
 #### Data Pipeline:
 
