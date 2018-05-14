@@ -2,10 +2,6 @@
 
 Insight 2018 Data Engineering Project
 
-[TOC]
-
-
-
 ## Project Summary:
 
 This data pipeline is designed and implemented for real-time detection of user anomaly in streaming Wikipedia edit log.
@@ -58,7 +54,33 @@ Use Case:
 
 1. The wikipedia edit log contains fields:
 
-   
+   > REVISION 4781981 72390319 Steven_Strogatz 2006-08-28T14:11:16Z SmackBot 433328 
+   >
+   > CATEGORY American_mathematicians 
+   >
+   > IMAGE 
+   >
+   > MAIN Boston_University MIT Harvard_University Cornell_University 
+   >
+   > TALK
+   >
+   > USER 
+   >
+   > USER_TALK 
+   >
+   > OTHER De:Steven_Strogatz Es:Steven_Strogatz 
+   >
+   > EXTERNAL http://www.edge.org/3rd_culture/bios/strogatz.html 
+   >
+   > TEMPLATE Cite_book Cite_book Cite_journal 
+   >
+   > COMMENT ISBN formatting &/or general fixes using [[WP:AWB|AWB]] 
+   >
+   > MINOR 1 
+   >
+   > TEXTDATA 229 
+   >
+   > [empty line]
 
    
 
