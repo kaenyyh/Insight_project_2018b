@@ -47,10 +47,9 @@ Use Case:
 
 
 ## Architecture
-![arch](images/arch_flink.png)
+![arch](images/arch2.png)
 
 ## Live Demo
 ![top window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif)
 
 ![bottom window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif)
-
