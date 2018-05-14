@@ -12,20 +12,17 @@ This data pipeline is designed and implemented for real-time detection of user a
 
 Changing and editing on existing topics are extrem common and quite often, especially from core group of user who like to engage more. This project aims to provide an analytic tool for wikipedia to ingest the core user behavier and suggest peer-review candidates for submitted revision.
 
-Use Case:
+##### Use Case:
 
-1. Total edits submission received by server:
-
-  Monitor trend of total submission to identify unexpected usage across all servers.
-
-2. Abnomal User Edits Detection: 
-
-  1. Identify the users who submitted too many edits within a short time window.
+1. **Total edits submission received by server:**
+  1. ****Monitor trend of total submission to identify unexpected usage across all servers.
+2. **Abnomal User Edits Detection:** 
+  1. ****Identify the users who submitted too many edits within a short time window.
   2. Extract the recent activity for this user from database to display.
 
 
 
-This anomaly detection pipeline has two branches for streaming processing and batch processing. 
+##### This anomaly detection pipeline has two branches for streaming processing and batch processing:
 
 1. For steaming processing part: 
 
