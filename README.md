@@ -2,6 +2,8 @@
 
 Insight 2018 Data Engineering Project
 
+[TOC]
+
 
 
 ## Project Summary:
@@ -54,5 +56,23 @@ Use Case:
 
 ## Input Data:
 
-1. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
-2. The data set contains fields of "user_id", "Edit time", "article", "category";
+1. The wikipedia edit log contains fields:
+
+   
+
+   
+
+2. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
+
+3. The data set contains fields of "user_id", "Edit time", "article", "category";
+
+## Version:
+
+1. Kafka: 1.0.0
+2. Flink: 1.4.0
+3. Spark: 2.2.1
+4. Cassandra: 3.11.2
+5. Dash: 0.21.1
+6. Hadoop: 2.7.6
+7. Zookeeper: 3.4.10
+
