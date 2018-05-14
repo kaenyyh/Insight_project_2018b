@@ -40,16 +40,19 @@ Use Case:
 
 ## Data:
 1. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
-
 2. The data set contains fields of "user_id", "Edit time", "article", "category";
 
-   
 
-
-## Architecture
-![arch](images/arch2.png)
 
 ## Live Demo
+
 ![top window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/topwindow12.gif)
 
 ![bottom window](https://github.com/kaenyyh/Insight_project_2018b/blob/master/images/bottomwindow10.gif)
+
+
+
+## Architecture
+
+![arch](images/arch2.png)
+
