@@ -52,40 +52,11 @@ Use Case:
 
 ## Input Data:
 
-1. The wikipedia edit log contains fields:
-
+1. The wikipedia edit log contains fields: `REVISION`,  `article_id`, `rev_id`,  `article_title`, `timestamp`,  `username`,  `user_id`. An example is shown below:
    > REVISION 4781981 72390319 Steven_Strogatz 2006-08-28T14:11:16Z SmackBot 433328 
-   >
-   > CATEGORY American_mathematicians 
-   >
-   > IMAGE 
-   >
-   > MAIN Boston_University MIT Harvard_University Cornell_University 
-   >
-   > TALK
-   >
-   > USER 
-   >
-   > USER_TALK 
-   >
-   > OTHER De:Steven_Strogatz Es:Steven_Strogatz 
-   >
-   > EXTERNAL http://www.edge.org/3rd_culture/bios/strogatz.html 
-   >
-   > TEMPLATE Cite_book Cite_book Cite_journal 
-   >
-   > COMMENT ISBN formatting &/or general fixes using [[WP:AWB|AWB]] 
-   >
-   > MINOR 1 
-   >
-   > TEXTDATA 229 
-   >
-   > [empty line]
 
    
-
 2. The uncompressed dataset is about several TB which can be downloaded from [wikipedia site](https://en.wikipedia.org/wiki/Wikipedia:Database_download);
-
 3. The data set contains fields of "user_id", "Edit time", "article", "category";
 
 ## Version:
