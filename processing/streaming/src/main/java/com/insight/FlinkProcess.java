@@ -31,6 +31,11 @@ import org.apache.flink.streaming.connectors.cassandra.CassandraSink;
 import com.insight.HostURLs.*;
 
 
+/*
+
+ */
+
+
 
 public class FlinkProcess {
     public static void main(String[] args) throws Exception {
@@ -61,20 +66,6 @@ public class FlinkProcess {
 
         // convert kafka stream to data stream
         DataStream<String> rawInputStream = env.addSource(kafkaConsumer);
-
-//        // inputs are 'revision', 'article_id', 'rev_id', 'article title', 'timestamp',  'username', 'userid','realtime'
-//        DataStream<Tuple2<String, Long>> windowedoutput = rawInputStream
-//                .map(line -> line.split(" "))
-//                .flatMap(new FlatMapFunction<String[], Tuple2<String, Long>>() {
-//                    @Override
-//                    public void flatMap(String[] s, Collector<Tuple2<String, Long>> collector) throws Exception {
-//                        collector.collect(new Tuple2<String, Long>(s[5], 1L));
-//                    }
-//                })
-//                .keyBy(0)
-//                .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
-//                .sum(1);
-//                //.window(TumblingEventTimeWindows.of(Time.seconds(1)))
 
 
         // input data: ['revision', 'article_id', 'rev_id', 'article_title', 'event_time', 'username', 'userid', 'proc_date', 'proc_time']
@@ -167,37 +158,25 @@ public class FlinkProcess {
                 .build();
 
 
-//        // count the total number of processed line in window of 5 sec
-//        DataStream<Tuple2<Long, Long>> winOutput = rawInputStream
-//                .map(line -> line.split(" "))
-//                .flatMap(new FlatMapFunction<String[], Tuple2<Long, Long>>() {
-//
-//                    // Create an accumulator
-//                    private long linesNum = 0;
-//
-//
-//                    @Override
-//                    public void flatMap(String[] lines, Collector<Tuple2<Long, Long>> out) throws Exception {
-//                        out.collect(new Tuple2<Long, Long>(linesNum++, 1L));
-//
-//                    }
-//                })
-//                .assignTimestampsAndWatermarks(new RegionInfoTimeStampGenerator())
-//                .keyBy(0)
-////                .window(TumblingProcessingTimeWindows.of(Time.minutes(5)))
-//                .window(TumblingEventTimeWindows.of(Time.milliseconds(50)))
-//                .reduce((a,b) -> new Tuple2<>(a.f0, a.f1+b.f1));
+        // count the total number of processed line in window of 5 sec
+        DataStream<Tuple2<Long, Long>> winOutput = rawInputStream
+                .map(line -> line.split(" "))
+                .flatMap(new FlatMapFunction<String[], Tuple2<Long, Long>>() {
+
+                    // Create an accumulator
+                    private long linesNum = 0;
 
 
-//        // read in raw input, then parse it to save only 3 elements: article title, timestamp, username
-//        DataStream<Tuple3< String, String, String>> output = rawInputStream
-//                .map(line -> line.split(" "))
-//                .flatMap(new FlatMapFunction<String[], Tuple3<String, String, String>>() {
-//                    @Override
-//                    public void flatMap(String[] s, Collector<Tuple3< String, String, String>> collector) throws Exception {
-//                        collector.collect(new Tuple3<String, String, String>(s[3], s[4], s[5]));
-//                    }
-//                });
+                    @Override
+                    public void flatMap(String[] lines, Collector<Tuple2<Long, Long>> out) throws Exception {
+                        out.collect(new Tuple2<Long, Long>(linesNum++, 1L));
+
+                    }
+                })
+                .assignTimestampsAndWatermarks(new RegionInfoTimeStampGenerator())
+                .keyBy(0)
+                .window(TumblingEventTimeWindows.of(Time.milliseconds(50)))
+                .reduce((a,b) -> new Tuple2<>(a.f0, a.f1+b.f1));
 
 
 //        // Tuple2 save two elements pair
@@ -220,23 +199,7 @@ public class FlinkProcess {
 //                });
 
 
-//        //Update the results to C* sink
 
-
-//        // update output to cassandra:
-//                CassandraSink.addSink(output)
-//                .setQuery("INSERT INTO playground.testTable2 ( arttitle, time, username) " +
-//                        "values (?, ?, ?);")
-//                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
-//                .build();
-
-
-//        // save window aggregation results:
-//        CassandraSink.addSink(winOutput)
-//                .setQuery("INSERT INTO playground.testTable3 (id, count) " +
-//                        "values (?, ?);")
-//                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
-//                .build();
 
 
         env.execute();
