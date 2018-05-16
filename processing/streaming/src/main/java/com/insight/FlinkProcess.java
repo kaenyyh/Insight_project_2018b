@@ -158,25 +158,25 @@ public class FlinkProcess {
                 .build();
 
 
-        // count the total number of processed line in window of 5 sec
-        DataStream<Tuple2<Long, Long>> winOutput = rawInputStream
-                .map(line -> line.split(" "))
-                .flatMap(new FlatMapFunction<String[], Tuple2<Long, Long>>() {
-
-                    // Create an accumulator
-                    private long linesNum = 0;
-
-
-                    @Override
-                    public void flatMap(String[] lines, Collector<Tuple2<Long, Long>> out) throws Exception {
-                        out.collect(new Tuple2<Long, Long>(linesNum++, 1L));
-
-                    }
-                })
-                .assignTimestampsAndWatermarks(new RegionInfoTimeStampGenerator())
-                .keyBy(0)
-                .window(TumblingEventTimeWindows.of(Time.milliseconds(50)))
-                .reduce((a,b) -> new Tuple2<>(a.f0, a.f1+b.f1));
+//        // count the total number of processed line in window of 5 sec
+//        DataStream<Tuple2<Long, Long>> winOutput = rawInputStream
+//                .map(line -> line.split(" "))
+//                .flatMap(new FlatMapFunction<String[], Tuple2<Long, Long>>() {
+//
+//                    // Create an accumulator
+//                    private long linesNum = 0;
+//
+//
+//                    @Override
+//                    public void flatMap(String[] lines, Collector<Tuple2<Long, Long>> out) throws Exception {
+//                        out.collect(new Tuple2<Long, Long>(linesNum++, 1L));
+//
+//                    }
+//                })
+//                .assignTimestampsAndWatermarks(new RegionInfoTimeStampGenerator())
+//                .keyBy(0)
+//                .window(TumblingEventTimeWindows.of(Time.milliseconds(50)))
+//                .reduce((a,b) -> new Tuple2<>(a.f0, a.f1+b.f1));
 
 
 //        // Tuple2 save two elements pair
