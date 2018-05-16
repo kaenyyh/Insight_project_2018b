@@ -28,7 +28,8 @@ import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.connectors.cassandra.CassandraSink;
 
 
-import static java.util.concurrent.TimeUnit.*;
+import com.insight.HostURLs.*;
+
 
 
 public class FlinkProcess {
@@ -38,20 +39,24 @@ public class FlinkProcess {
 
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        // start kafka producer !!!!!!!!! using python producer
+        // start kafka producer -> now use python producer 'KProducer'
         //KProducer kp = new KProducer();
         //kp.kafkaProducer();
 
+        // call HostURLs class to get URLs for all services
+        HostURLs urls = new HostURLs();
+
+
         // create new property of Flink
-        // set zookeeper and flink url
+        // set Zookeeper and Kafka url
         Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", "ec2-50-112-36-122.us-west-2.compute.amazonaws.com:9092");
-        properties.setProperty("zookeeper.connect", "ec2-50-112-36-122.us-west-2.compute.amazonaws.com:2181");
+        properties.setProperty("bootstrap.servers", urls.KAFKA_URL + ":9092");
+        properties.setProperty("zookeeper.connect", urls.ZOOKEEPER_URL + ":2181");
         //properties.setProperty("group.id", "flink_consumer");
 
 
-        // read 'topic' from Kafka producer
-        FlinkKafkaConsumer010<String> kafkaConsumer = new FlinkKafkaConsumer010<String>("ctest",
+        // read 'topic' from Kafka producer: Kafka topic is "wikiInput"
+        FlinkKafkaConsumer010<String> kafkaConsumer = new FlinkKafkaConsumer010<String>("wikiInput",
                 new SimpleStringSchema(), properties);
 
         // convert kafka stream to data stream
@@ -94,7 +99,7 @@ public class FlinkProcess {
         CassandraSink.addSink(windowedoutput)
                 .setQuery("INSERT INTO ks.totalInputCountSecond (global_id, proc_time, count) " +
                         "values (?, ?, ?);")
-                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .setHost(urls.CASSANDRA_URL)
                 .build();
 
 
@@ -120,7 +125,7 @@ public class FlinkProcess {
         CassandraSink.addSink(singleUserCount)
                 .setQuery("INSERT INTO ks.singleUserCount (username, proc_time, count) " +
                         "values (?, ?, ?);")
-                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .setHost(urls.CASSANDRA_URL)
                 .build();
 
 
@@ -158,7 +163,7 @@ public class FlinkProcess {
         CassandraSink.addSink(flaggedUser)
                 .setQuery("INSERT INTO ks.flaggedUser (global_id, proc_time, username, count) " +
                         "values (?,?, ?, ?);")
-                .setHost("ec2-50-112-36-122.us-west-2.compute.amazonaws.com")
+                .setHost(urls.CASSANDRA_URL)
                 .build();
 
 
