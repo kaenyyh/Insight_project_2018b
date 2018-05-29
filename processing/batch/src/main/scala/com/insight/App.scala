@@ -13,10 +13,22 @@ import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 
+/*
+  To read batch data (~ 0.5 TB) of Wikipedia history edit log from AWS S3. Spark batch processing is to calculate:
+  1. for each article, the total amount edits per month:
+      --------------------------------
+      | Article Name | Month | Count |
+      --------------------------------
+  2. for each user, the total amount edits per day;
+      --------------------------
+      | UserName | Day | Count |
+      --------------------------
+ */
+
 
 object App {
 
-  // change the string of date to timestamp
+  // change the string of date to timestamp in format: "2018-01-01T00:00:00Z"
   def getTimestamp(x:Any) : Timestamp = {
     val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
     if (x.toString() == "")
@@ -49,34 +61,42 @@ object App {
 
 
     /*
-      Algorithm
-     */
+      Algorithm and Transformation
+    */
 
-    //!!!!!!!!!!!!!!!  pass all columns in file into cassandra  !!!!!!!!!!!!!!!!
-//    val TABLE_COLUMNS = SomeColumns("revision", "artid", "revid", "arttitle", "revtime", "date", "time", "username", "userid")
-//
-//    myFile.map{ line => {
-//      val lines = line.split(" ")
-//      val formatedtime = lines(4).slice(0,10) + " " + lines(4).slice(11,19)
-//
-//      // !!!!!!!!!!!!   convert string to timestamp !!!!!!!!!!!!!
-//      //val simpleDateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-mm-dd")
-//      //val date1 = simpleDateFormat.parse(lines(4).slice(0,10)).getTime
-//      //val df = new SimpleDateFormat("yyyy-mm-dd")
-//
-//      (lines(0), lines(1), lines(2), lines(3), formatedtime, lines(4).slice(0,10), lines(4).slice(11,19), lines(5), lines(6))
-//      }}.saveToCassandra("playground", "prodtest", TABLE_COLUMNS)
+    // Create table schema with all of the fields in input data:
+    // "REVISION", "article id", "revision id", "article", "revision time", "date", "time", "username" and "userid"
+    // using "article" and "month" as primary key and count the number for each key
+    // save the result to table "articleMontlyCount"
+    val TABLE_COLUMNS = SomeColumns("revision", "artid", "revid", "arttitle", "revtime", "date", "time", "username", "userid")
+
+    myFile
+      .map{ line => {
+        val lines = line.split(" ")
+        val formatedtime = lines(4).slice(0,10) + " " + lines(4).slice(11,19)
+
+        // !!!!!!!!!!!!   convert string to timestamp !!!!!!!!!!!!!
+        val simpleDateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-mm-dd")
+        val date1 = simpleDateFormat.parse(lines(4).slice(0,10)).getTime
+        val df = new SimpleDateFormat("yyyy-mm-dd")
+
+        (lines(0), lines(1), lines(2), lines(3), formatedtime, lines(4).slice(0,10), lines(4).slice(11,19), lines(5), lines(6))
+      }}
+      .saveToCassandra("playground", "allInputInfo", TABLE_COLUMNS)
 
 
-    //!!!!!!!!!!!!!!!!  mapreduce to calculate article update times by month !!!!!!!!!!!
-    val TABLE_COLUMNS_ART = SomeColumns("arttitle", "date", "count")
+    // Create table schema with "article", "month" and "count"
+    // using "article" and "month" as primary key and count the number for each key
+    // save the result to table "articleMontlyCount"
+    val TABLE_COLUMNS_ART = SomeColumns("arttitle", "month", "count")
 
     myFile.map{ line => {
       val lines = line.split(" ")
       val formatedmonth = lines(4).slice(0,7)
       ((lines(3), formatedmonth), 1)
-    }}.reduceByKey(_ + _).map(p => (p._1._1, p._1._2, p._2))
-      .saveToCassandra("playground", "sumtest", TABLE_COLUMNS_ART)
+    }}.reduceByKey(_ + _)
+      .map(p => (p._1._1, p._1._2, p._2))
+      .saveToCassandra("ks", "articleMonthlyCount", TABLE_COLUMNS_ART)
 
 
 
@@ -84,11 +104,25 @@ object App {
     //val hello = sc.cassandraTable[(String, Long)]("playground", "testtable")
     //val first = hello.first
 
+
+    // Create table schema with "username", "day" and "count"
+    // using "username" and "day" as primary key and count the number for each key
+    // save the result to table "userDailyCount"
+    val TABLE_COLUMNS_USER = SomeColumns("username", "day", "count")
+
+    myFile.map{ line => {
+      val lines = line.split(" ")
+      val formatedday = lines(4).slice(0,10)
+      ((lines(3), formatedday), 1)
+    }}.reduceByKey(_ + _)
+      .map(p => (p._1._1, p._1._2, p._2))
+      .saveToCassandra("ks", "userDailyCount", TABLE_COLUMNS_USER)
+
+
     sc.stop
 
-    println("it should print something!!!!!!")
-    //println(hello)
-    //println(first)
+    //println("Spark is processing")
+
 
   }
 

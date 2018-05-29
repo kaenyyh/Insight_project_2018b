@@ -6,6 +6,9 @@ Insight 2018 Data Engineering Project
 
 This data pipeline is designed and implemented for real-time detection of user anomaly in streaming Wikipedia edit log.
 
+[Project Slides]: http://bit.ly/wikiguardianslides
+[Project Video]: http://bit.ly/wikiguardianyoutubedemo
+
 
 
 ## Project Description:
